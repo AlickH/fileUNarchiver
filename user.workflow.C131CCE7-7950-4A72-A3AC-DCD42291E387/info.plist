@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.mayuzumi.archiver</string>
+	<key>category</key>
+	<string>Tools</string>
+	<key>connections</key>
+	<dict>
+		<key>87CC6F8D-A638-4C56-B417-35636DB21A54</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>9B0BAD20-DB03-48C5-AA2F-74014165E9EF</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>9B0BAD20-DB03-48C5-AA2F-74014165E9EF</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>7C4E2BE5-1028-47CF-B357-D57801D866B8</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B7AEFB29-9FFA-4F6C-9018-ABA63B01BCC2</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>E4E75318-E3E5-4A60-AC27-9E658ABC442D</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>C9520787-FCBC-4183-B453-6C21710CA952</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B7AEFB29-9FFA-4F6C-9018-ABA63B01BCC2</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>mayuzumi</string>
+	<key>description</key>
+	<string>Archive and unarchive files.</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>File (un)Archiver</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>File compressed successfully!</string>
+				<key>title</key>
+				<string>Done!</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>E4E75318-E3E5-4A60-AC27-9E658ABC442D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>acceptsmulti</key>
+				<true/>
+				<key>filetypes</key>
+				<array/>
+				<key>name</key>
+				<string>Archive</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.action</string>
+			<key>uid</key>
+			<string>C9520787-FCBC-4183-B453-6C21710CA952</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>workdir=$(dirname -- "$1")
+zipfile=`basename "$1"`.zip
+
+LANG=$(defaults read .GlobalPreferences AppleLanguages)
+if [[ $LANG == *zh* ]]; then
+	dialogA="请设置压缩文件密码，如不设置密码请直接回车："
+	optionA="继续"
+else
+	dialogA="Please set archive file's password, if you do not want to set the password, just press Enter to continue:"
+	optionA="Continue"
+fi
+
+enterPassword=$(osascript -e "display dialog \"$dialogA\" default answer \"\" buttons {\"$optionA\"} default button 1" -e "text returned of the result")
+
+cd $workdir
+
+for file in "$@"; do
+	if [[ "`dirname \"$file\"`" == "$workdir" ]]; then
+		if [[ $enterPassword != "" ]]; then
+		zip -ruq -P "$enterPassword" "$zipfile" "`basename \"$file\"`" -x "*.DS_Store*" -x "*__MACOSX*" -x "*.git*" -x "*.svn*" -x "*.idea*"
+		else
+		zip -ruq "$zipfile" "`basename \"$file\"`" -x "*.DS_Store*" -x "*__MACOSX*" -x "*.git*" -x "*.svn*" -x "*.idea*"
+		fi
+	else
+		rm "$zipfile"
+		exit 1
+	fi
+done
+
+exit 0</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>B7AEFB29-9FFA-4F6C-9018-ABA63B01BCC2</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>#!/bin/bash
+LANG=$(defaults read .GlobalPreferences AppleLanguages|awk 'NR==2')
+if [[ $LANG == *zh-Hans-CN* ]]; then
+	dialogA="请输入压缩文件密码："
+	optionA1="继续"
+	optionA2="取消"
+	dialogB="文件已存在，请选择："
+	optionB1="覆盖"
+	optionB2="跳过"
+	optionB3="重命名"
+else
+	dialogA="Please input archive file's password:"
+	optionA1="Continue"
+	optionA2="Cancel"
+	dialogB="File existing, please choose to:"
+	optionB1="Overwrite"
+	optionB2="Skip"
+	optionB3="Rename"
+fi
+
+workdir=$(dirname -- "{query}")
+checkPassword=$(./lsar -t -p "" "{query}")
+exist=$(./unar "{query}" -o "$workdir")
+
+validPassword(){
+	while [[ $checkPassword == *"Unpacking failed"* ]]; do
+		enterPassword=$(osascript -e "display dialog \"$dialogA\" default answer \"\" buttons {\"$optionA1\"} default button 1" -e "text returned of the result")
+		if [[ $enterPassword != "" ]]; then
+			checkPassword=$(./lsar -t -p "$enterPassword" -E "utf-8" "{query}")
+		else
+			exit
+		fi
+	done
+}
+
+getPassword(){
+	if [[ $checkPassword == *"Unpacking failed"* ]]; then
+		validPassword
+	else
+		enterPassword=""
+	fi
+}
+
+if [[ $exist == *exist* ]]; then
+			option=$(osascript -e "display dialog \"$dialogB\" buttons {\"$optionB1\", \"$optionB2\", \"$optionB3\"} default button 1" -e "button returned of the result")
+			case $option in
+				$optionB1) getPassword
+					./unar -f -p "$enterPassword" -E "utf-8" "{query}" -o "$workdir"
+				;;
+				$optionB2) exit
+				;;
+				$optionB3) getPassword
+					./unar -r -p "$enterPassword" -E "utf-8" "{query}" -o "$workdir"
+				;;
+			esac
+else
+	getPassword
+	./unar -f -p "$enterPassword" -E "utf-8" "{query}" -o "$workdir"
+fi</string>
+				<key>scriptargtype</key>
+				<integer>0</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>9B0BAD20-DB03-48C5-AA2F-74014165E9EF</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>acceptsmulti</key>
+				<true/>
+				<key>filetypes</key>
+				<array>
+					<string>com.microsoft.word.openxmlformats.wordprocessingml.document</string>
+					<string>com.rarlab.rar-archive</string>
+					<string>dyn.ah62d4rv4ge81e2pw</string>
+					<string>org.7-zip.7-zip-archive</string>
+					<string>public.iso-image</string>
+					<string>public.zip-archive</string>
+				</array>
+				<key>name</key>
+				<string>Unarchive</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.action</string>
+			<key>uid</key>
+			<string>87CC6F8D-A638-4C56-B417-35636DB21A54</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>lastpathcomponent</key>
+				<false/>
+				<key>onlyshowifquerypopulated</key>
+				<true/>
+				<key>removeextension</key>
+				<false/>
+				<key>text</key>
+				<string>Files extracted successfully!</string>
+				<key>title</key>
+				<string>Done!</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.notification</string>
+			<key>uid</key>
+			<string>7C4E2BE5-1028-47CF-B357-D57801D866B8</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string></string>
+	<key>uidata</key>
+	<dict>
+		<key>7C4E2BE5-1028-47CF-B357-D57801D866B8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>460</integer>
+			<key>ypos</key>
+			<integer>300</integer>
+		</dict>
+		<key>87CC6F8D-A638-4C56-B417-35636DB21A54</key>
+		<dict>
+			<key>xpos</key>
+			<integer>55</integer>
+			<key>ypos</key>
+			<integer>300</integer>
+		</dict>
+		<key>9B0BAD20-DB03-48C5-AA2F-74014165E9EF</key>
+		<dict>
+			<key>xpos</key>
+			<integer>245</integer>
+			<key>ypos</key>
+			<integer>300</integer>
+		</dict>
+		<key>B7AEFB29-9FFA-4F6C-9018-ABA63B01BCC2</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>95</integer>
+		</dict>
+		<key>C9520787-FCBC-4183-B453-6C21710CA952</key>
+		<dict>
+			<key>xpos</key>
+			<integer>50</integer>
+			<key>ypos</key>
+			<integer>95</integer>
+		</dict>
+		<key>E4E75318-E3E5-4A60-AC27-9E658ABC442D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>460</integer>
+			<key>ypos</key>
+			<integer>95</integer>
+		</dict>
+	</dict>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>∞</string>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>
